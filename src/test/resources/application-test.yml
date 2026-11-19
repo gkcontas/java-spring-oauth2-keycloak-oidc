@@ -1,0 +1,8 @@
+app:
+  keycloak:
+    # Short, so a test that rotates the key does not wait 30 s for the next fetch.
+    jwks-min-refetch-interval: 2s
+
+management:
+  server:
+    port: -1

@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: documents
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: docs-web
+            # Development secret, imported with the realm. Production reads DOCS_WEB_SECRET.
+            client-secret: ${DOCS_WEB_SECRET:docs-web-secret}
+            authorization-grant-type: authorization_code
+            scope: openid,profile,email,documents:read
+        provider:
+          keycloak:
+            issuer-uri: ${app.keycloak.realm-url}
+
+server:
+  port: 8080
+
+app:
+  keycloak:
+    realm-url: http://localhost:8180/realms/docs
+    audience: docs-api
+    clock-skew: 30s
+    jwks-cache-ttl: 5m
+    jwks-min-refetch-interval: 30s
+    jwks-outage-tolerance: 1h
+    introspection:
+      client-id: docs-api
+      client-secret: ${DOCS_API_SECRET:docs-api-secret}
+    refresh-skew: 30s
+    self-url: http://localhost:${server.port}
+
+management:
+  # Metrics on a separate port bound to loopback, outside the public chains.
+  server:
+    port: 8081
+    address: 127.0.0.1
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
